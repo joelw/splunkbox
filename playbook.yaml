@@ -1,7 +1,7 @@
 ---
 - hosts: default
   vars:
-      splunkver: 6.1.1-207789-linux-2.6-x86_64
+      splunkver: 6.2.2-255606-linux-2.6-x86_64
       installapps: true
       # ssl_enabled
       # auth_enabled
@@ -63,7 +63,7 @@
 
     # https://apps.splunk.com/app/748/
     - name: Install SoS
-      unarchive: src=sw/sos-splunk-on-splunk_32.tgz
+      unarchive: src=sw/sos-splunk-on-splunk_321.tgz
                  dest=/opt/splunk/etc/apps
                  creates=/opt/splunk/etc/apps/sos
       when: installapps
@@ -72,7 +72,7 @@
 
     # https://apps.splunk.com/app/1603/
     - name: Install Splunk-6 dashboard examples
-      unarchive: src=sw/splunk-6x-dashboard-examples_201.tgz
+      unarchive: src=sw/splunk-6x-dashboard-examples_30.tgz
                  dest=/opt/splunk/etc/apps
                  creates=/opt/splunk/etc/apps/simple_xml_examples
       when: installapps
@@ -90,6 +90,12 @@
 
     - name: Ensure Splunk service is configured
       copy: src=files/splunk.init dest=/etc/init.d/splunk
+            owner=root group=root mode=0755
+      notify:
+        - restart splunk
+
+    - name: Splunk local configuration
+      copy: src=files/splunk_web.conf dest=/opt/splunk/etc/system/local/web.conf
             owner=root group=root mode=0755
       notify:
         - restart splunk
